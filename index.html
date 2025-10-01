@@ -2,80 +2,54 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Time-Lens UI Prototype</title>
+  <title>Emotional Filter UI</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-    .container {
-      position: relative;
-      width: 90%;
-      max-width: 800px;
-      height: 500px;
-      overflow: hidden;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.7);
-    }
-    .image-layer {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: opacity 0.5s ease;
-    }
-    .slider {
-      width: 80%;
-      margin-top: 20px;
-    }
-    h1 {
-      font-size: 1.5rem;
-      margin-bottom: 10px;
-      text-align: center;
-    }
+    body { font-family: sans-serif; background: #111; color: white; }
+    .filters button { margin: 5px; padding: 10px; border: none; cursor: pointer; }
+    .gallery { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+    .gallery img { width: 200px; border-radius: 10px; transition: transform 0.3s; }
+    .gallery img:hover { transform: scale(1.05); }
+    /* Emotion Themes */
+    body.ambition { background: linear-gradient(to right, black, gold); }
+    body.chaos { background: #200; animation: chaos 0.2s infinite alternate; }
+    body.serenity { background: #003366; }
+    body.energy { background: #111; color: #0f0; }
+    @keyframes chaos { from { background: #200; } to { background: #400; } }
   </style>
 </head>
 <body>
-  <h1>⏳ Time-Lens UI Prototype</h1>
-  <div class="container">
-    <img id="past" class="image-layer" src="https://i.postimg.cc/N0j4K6vY/IMG-20250820-WA0064.jpg" style="opacity:1">
-    <img id="present" class="image-layer" src="https://i.postimg.cc/tgvzWs96/IMG-20250820-WA0078.jpg" style="opacity:0">
-    <img id="future" class="image-layer" src="https://i.postimg.cc/rmdNJqpP/IMG-20250820-WA0081.jpg" style="opacity:0">
+  <h1>Emotional Filter UI</h1>
+  <div class="filters">
+    <button onclick="filterPhotos('all')">All</button>
+    <button onclick="filterPhotos('ambition')">Ambition</button>
+    <button onclick="filterPhotos('chaos')">Chaos</button>
+    <button onclick="filterPhotos('serenity')">Serenity</button>
+    <button onclick="filterPhotos('energy')">Energy</button>
   </div>
-  <input type="range" min="0" max="2" step="1" value="0" class="slider" id="timeSlider">
+  <div class="gallery" id="gallery"></div>
 
   <script>
-    const slider = document.getElementById('timeSlider');
-    const past = document.getElementById('past');
-    const present = document.getElementById('present');
-    const future = document.getElementById('future');
-
-    slider.addEventListener('input', () => {
-      const val = parseInt(slider.value);
-      if(val === 0){
-        past.style.opacity = 1;
-        present.style.opacity = 0;
-        future.style.opacity = 0;
-      } else if(val === 1){
-        past.style.opacity = 0;
-        present.style.opacity = 1;
-        future.style.opacity = 0;
-      } else {
-        past.style.opacity = 0;
-        present.style.opacity = 0;
-        future.style.opacity = 1;
-      }
-    });
+    let photos = [];
+    async function loadPhotos() {
+      const res = await fetch('photos.json');
+      photos = await res.json();
+      displayPhotos(photos);
+    }
+    function displayPhotos(list) {
+      const gallery = document.getElementById('gallery');
+      gallery.innerHTML = '';
+      list.forEach(photo => {
+        const img = document.createElement('img');
+        img.src = photo.url;
+        gallery.appendChild(img);
+      });
+    }
+    function filterPhotos(emotion) {
+      document.body.className = emotion === 'all' ? '' : emotion;
+      if (emotion === 'all') displayPhotos(photos);
+      else displayPhotos(photos.filter(p => p.emotion === emotion));
+    }
+    loadPhotos();
   </script>
 </body>
 </html>
