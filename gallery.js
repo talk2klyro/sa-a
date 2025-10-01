@@ -1,133 +1,94 @@
-let allPhotos = [];
-let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-let layout = localStorage.getItem("layout") || "grid";
-let showFavorites = false;
+let images = [];
+let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+let showFavoritesOnly = false;
 
-// Portfolio placeholder URL
-const portfolioURL = "https://placeholder-portfolio.com?ref=wedding-gallery&utm_source=gallery&utm_medium=emoji";
+// Fetch JSON
+fetch('images.json')
+  .then(res => res.json())
+  .then(data => {
+    images = data;
+    renderGallery();
+  });
 
-// Load JSON and render
-async function loadGallery() {
-  const res = await fetch('images.json');
-  allPhotos = await res.json();
-  renderGallery();
-}
-
-// Render photos
+// Render gallery
 function renderGallery() {
   const gallery = document.getElementById('gallery');
-  gallery.className = `gallery ${layout}`;
-  gallery.innerHTML = "";
+  gallery.innerHTML = '';
 
-  const search = document.getElementById("search").value.toLowerCase();
+  let filteredImages = images;
 
-  let photosToRender = allPhotos.filter(p =>
-    (!showFavorites || favorites.includes(p.src)) &&
-    (p.alt.toLowerCase().includes(search) ||
-     p.tags.join(" ").toLowerCase().includes(search))
-  );
+  if (showFavoritesOnly) {
+    filteredImages = images.filter(img => favorites.includes(img.id));
+  }
 
-  photosToRender.forEach(photo => {
-    const div = document.createElement("div");
-    div.className = "photo-container";
-    div.innerHTML = `
-      <img src="${photo.src}" alt="${photo.alt}">
-      <div class="favorite ${favorites.includes(photo.src) ? 'active' : ''}">❤️</div>
-    `;
+  const searchQuery = document.getElementById('search').value.toLowerCase();
+  if (searchQuery) {
+    filteredImages = filteredImages.filter(img =>
+      img.alt.toLowerCase().includes(searchQuery) ||
+      img.tags.some(tag => tag.toLowerCase().includes(searchQuery))
+    );
+  }
 
-    div.querySelector("img").addEventListener("click", () => openLightbox(photo));
-    div.querySelector(".favorite").addEventListener("click", (e) => {
-      e.stopPropagation();
-      toggleFavorite(photo.src, div.querySelector(".favorite"));
-    });
+  filteredImages.forEach(img => {
+    const imageEl = document.createElement('img');
+    imageEl.src = img.src;
+    imageEl.alt = img.alt;
+    imageEl.dataset.id = img.id;
 
-    gallery.appendChild(div);
+    // Favorite mark
+    if (favorites.includes(img.id)) {
+      imageEl.style.border = '3px solid red';
+    }
+
+    imageEl.addEventListener('click', () => openLightbox(img));
+    imageEl.addEventListener('dblclick', () => toggleFavorite(img.id));
+
+    gallery.appendChild(imageEl);
   });
 }
 
-// Toggle favorite
-function toggleFavorite(src, el) {
-  if (favorites.includes(src)) {
-    favorites = favorites.filter(f => f !== src);
-    el.classList.remove("active");
+// Favorite toggle
+function toggleFavorite(id) {
+  if (favorites.includes(id)) {
+    favorites = favorites.filter(f => f !== id);
   } else {
-    favorites.push(src);
-    el.classList.add("active");
+    favorites.push(id);
   }
-  localStorage.setItem("favorites", JSON.stringify(favorites));
+  localStorage.setItem('favorites', JSON.stringify(favorites));
+  renderGallery();
 }
+
+// Search input
+document.getElementById('search').addEventListener('input', renderGallery);
+
+// Toggle favorites
+document.getElementById('toggleFavorites').addEventListener('click', () => {
+  showFavoritesOnly = !showFavoritesOnly;
+  renderGallery();
+});
+
+// Toggle layout
+document.getElementById('toggleLayout').addEventListener('click', () => {
+  const gallery = document.getElementById('gallery');
+  gallery.classList.toggle('carousel');
+  gallery.classList.toggle('grid');
+});
 
 // Lightbox
-function openLightbox(photo) {
-  const lb = document.getElementById("lightbox");
-  const img = document.getElementById("lightboxImg");
-  img.src = photo.src;
-  img.alt = photo.alt;
-  lb.classList.remove("hidden");
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightboxImg');
+
+function openLightbox(img) {
+  lightbox.classList.remove('hidden');
+  lightboxImg.src = img.src;
+  lightboxImg.alt = img.alt;
 }
-document.getElementById("closeLightbox").addEventListener("click", () => {
-  document.getElementById("lightbox").classList.add("hidden");
+
+document.getElementById('closeLightbox').addEventListener('click', () => {
+  lightbox.classList.add('hidden');
 });
 
-// Fullscreen
-document.getElementById("fullscreen").addEventListener("click", () => {
-  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-  else document.exitFullscreen();
+// Developer link
+document.getElementById('developerLink').addEventListener('dblclick', () => {
+  alert("Hello! I'm the developer 🤔");
 });
-
-// Layout toggle
-document.getElementById("toggleLayout").addEventListener("click", () => {
-  layout = layout === "grid" ? "carousel" : "grid";
-  localStorage.setItem("layout", layout);
-  renderGallery();
-});
-
-// View favorites
-document.getElementById("viewFavorites").addEventListener("click", () => {
-  showFavorites = !showFavorites;
-  renderGallery();
-});
-
-// Search filter
-document.getElementById("search").addEventListener("input", renderGallery);
-
-// Share buttons with branded text
-function getShareText() {
-  return `Check out this wedding gallery ✨ crafted with 🤔 ${window.location.href}`;
-}
-document.querySelectorAll(".share").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const url = window.location.href;
-    const type = btn.dataset.type;
-    let shareUrl = "";
-
-    if (navigator.share) {
-      navigator.share({ title: "Wedding Gallery", url });
-      return;
-    }
-
-    switch(type) {
-      case "whatsapp": shareUrl = `https://wa.me/?text=${encodeURIComponent(getShareText())}`; break;
-      case "facebook": shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareText())}`; break;
-      case "twitter": shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(getShareText())}`; break;
-      case "copy": navigator.clipboard.writeText(url); alert("Link copied!"); return;
-    }
-    window.open(shareUrl, "_blank");
-  });
-});
-
-// Branding: footer & lightbox 🤔 clicks
-document.getElementById("portfolioEmoji").addEventListener("click", () => {
-  window.open(portfolioURL, "_blank");
-});
-document.getElementById("lightboxEmoji").addEventListener("click", () => {
-  window.open(portfolioURL, "_blank");
-});
-
-// Easter Egg
-document.getElementById("portfolioEmoji").addEventListener("dblclick", () => {
-  alert("👋 Hey! I'm the developer behind this gallery. See my other works at https://placeholder-portfolio.com");
-});
-
-// Init
-document.addEventListener("DOMContentLoaded", loadGallery);
