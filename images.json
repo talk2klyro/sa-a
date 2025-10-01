@@ -1,27 +1,20 @@
 [
   {
-    "src": "https://i.postimg.cc/N2KdsByN/3-GSCz-JOz-T16-BDc3-WHB9-DA.webp",
-    "alt": "Ceremony moment",
-    "tags": ["ceremony", "bride", "groom"]
+    "id": 1,
+    "src": "images/wedding1-hd.jpg",
+    "alt": "Bride and Groom embracing",
+    "tags": ["ceremony", "romantic"]
   },
   {
-    "src": "https://i.postimg.cc/PLM3K6nh/d-KOr-Yf-Cq-Sd-SG3-A8m-Nmaufg.webp",
-    "alt": "Reception dance",
-    "tags": ["reception", "dance", "party"]
+    "id": 2,
+    "src": "images/wedding2-hd.jpg",
+    "alt": "Wedding Cake with flowers",
+    "tags": ["cake", "reception"]
   },
   {
-    "src": "https://i.postimg.cc/DSLY4vxD/f3o-LT-cs-Sl-Kxzco-WLp-Y1fw.webp",
-    "alt": "Family group photo",
-    "tags": ["family", "group", "ceremony"]
-  },
-  {
-    "src": "https://i.postimg.cc/18wYVmvj/i-R4-QTL-TS-m-QR8-DBl-Zk-YYQ.webp",
-    "alt": "Romantic couple pose",
-    "tags": ["bride", "groom", "romance"]
-  },
-  {
-    "src": "https://i.postimg.cc/YvYyLrdP/Rvyhn-D1-NRw-Oe-Ij-YIFhr-OIg.webp",
-    "alt": "Bridesmaids fun",
-    "tags": ["bridesmaids", "party", "friends"]
+    "id": 3,
+    "src": "images/wedding3-hd.jpg",
+    "alt": "Bride dancing",
+    "tags": ["dance", "party"]
   }
 ]
