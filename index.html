@@ -5,246 +5,170 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wedding Gallery</title>
   <style>
-    body {
-      font-family: 'Georgia', serif;
-      margin: 0;
-      background: #fafafa;
-      color: #333;
-    }
-
-    h1 {
-      text-align: center;
-      font-size: 2.5rem;
-      margin: 20px 0;
-      color: #b76e79; /* romantic rose tone */
-    }
-
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 15px;
-      padding: 20px;
-      max-width: 1200px;
-      margin: auto;
-    }
-
-    .gallery a {
-      display: block;
-      position: relative;
-      overflow: hidden;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .gallery a:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-    }
-
-    .gallery img {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 12px;
-    }
-
+    body { font-family: Arial, sans-serif; margin: 0; background: #fafafa; }
+    header { background: #fff; padding: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+    .search-bar { flex: 1; margin-right: 15px; }
+    .search-bar input { width: 100%; padding: 10px 15px; border-radius: 25px; border: 2px solid #ddd; font-size: 16px; }
+    .btn-group button { padding: 8px 16px; margin: 0 5px; border: none; border-radius: 20px; cursor: pointer; font-size: 14px; font-weight: bold; }
+    .btn-group button.active { background: #ff4081; color: white; }
+    .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; padding: 15px; transition: all 0.3s ease; }
+    .gallery.carousel { display: flex; overflow-x: auto; gap: 20px; scroll-snap-type: x mandatory; }
+    .gallery img { width: 100%; border-radius: 12px; cursor: pointer; transition: transform 0.3s; }
+    .gallery img:hover { transform: scale(1.05); }
+    .favorite { position: absolute; top: 10px; right: 10px; font-size: 22px; color: #fff; text-shadow: 0 0 4px #000; cursor: pointer; }
+    .favorite.active { color: #ff4081; text-shadow: 0 0 6px rgba(255,64,129,0.6); }
+    .photo-container { position: relative; }
     /* Lightbox */
-    .lightbox {
-      display: none;
-      position: fixed;
-      z-index: 999;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.9);
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      animation: fadeIn 0.4s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .lightbox img {
-      max-width: 90%;
-      max-height: 70%;
-      border-radius: 10px;
-      box-shadow: 0 6px 25px rgba(255,255,255,0.3);
-    }
-
-    .lightbox.active {
-      display: flex;
-    }
-
-    .caption {
-      margin-top: 15px;
-      font-size: 1.2rem;
-      color: #fff;
-      text-align: center;
-    }
-
-    .controls {
-      margin-top: 15px;
-      display: flex;
-      gap: 20px;
-    }
-
-    .controls button {
-      background: #b76e79;
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      font-size: 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .controls button:hover {
-      background: #944f5a;
-    }
-
-    .close {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      font-size: 30px;
-      color: #fff;
-      text-decoration: none;
-      cursor: pointer;
-    }
+    .lightbox { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); justify-content:center; align-items:center; flex-direction:column; }
+    .lightbox img { max-width: 90%; max-height: 80%; border-radius: 10px; }
+    .lightbox .controls { margin-top: 20px; display: flex; gap: 15px; }
+    .lightbox button { background: #ff4081; border:none; padding:10px 15px; border-radius:8px; color:#fff; font-weight:bold; cursor:pointer; }
+    .close-btn { position: absolute; top: 20px; right: 20px; font-size: 28px; color: white; cursor: pointer; }
+    /* Floating share button */
+    .share-fab { position: fixed; bottom: 20px; right: 20px; background: #ff4081; color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 26px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+    .share-menu { position: fixed; bottom: 90px; right: 20px; display: none; flex-direction: column; gap: 10px; }
+    .share-menu button { background: white; border: 2px solid #ff4081; color: #ff4081; border-radius: 30px; padding: 8px 14px; cursor: pointer; font-weight: bold; }
   </style>
 </head>
 <body>
 
-  <h1>Our Wedding Moments 💍</h1>
-
-  <div class="gallery">
-    <a href="#" data-index="0"><img src="https://i.postimg.cc/N2KdsByN/3-GSCz-JOz-T16-BDc3-WHB9-DA.webp" alt="First Look"></a>
-    <a href="#" data-index="1"><img src="https://i.postimg.cc/PLM3K6nh/d-KOr-Yf-Cq-Sd-SG3-A8m-Nmaufg.webp" alt="Ceremony"></a>
-    <a href="#" data-index="2"><img src="https://i.postimg.cc/DSLY4vxD/f3o-LT-cs-Sl-Kxzco-WLp-Y1fw.webp" alt="Bride & Groom"></a>
-    <a href="#" data-index="3"><img src="https://i.postimg.cc/18wYVmvj/i-R4-QTL-TS-m-QR8-DBl-Zk-YYQ.webp" alt="Romantic Moment"></a>
-    <a href="#" data-index="4"><img src="https://i.postimg.cc/YvYyLrdP/Rvyhn-D1-NRw-Oe-Ij-YIFhr-OIg.webp" alt="Wedding Party"></a>
-    <a href="#" data-index="5"><img src="https://i.postimg.cc/vgqPwcmq/r-Yvh-CBIFSy-OCwj-Vs-gxxyg.webp" alt="Couple Portrait"></a>
-    <a href="#" data-index="6"><img src="https://i.postimg.cc/qhbmHz7Z/Wi0-DZ9-ZGRpq-Yf-Ket-X0zg-Hw.webp" alt="Reception Dance"></a>
-    <a href="#" data-index="7"><img src="https://i.postimg.cc/PCYFvXS0/Wlot6m-Pv-Ta-w-NMNFor7x-DQ.webp" alt="Cake Cutting"></a>
-    <a href="#" data-index="8"><img src="https://i.postimg.cc/XZW1wRhw/ZEia-GCa-VRKe-Qh-QHXl-NTbp-Q.webp" alt="Celebration"></a>
-    <a href="#" data-index="9"><img src="https://i.postimg.cc/FdsP6jh9/lgd-WFAw-Qfu-ce98-XGV8r-Q.jpg" alt="Final Kiss"></a>
+<header>
+  <div class="search-bar"><input type="text" id="search" placeholder="Search moments..."></div>
+  <div class="btn-group">
+    <button id="gridBtn" class="active">🟦 Grid</button>
+    <button id="carouselBtn">🎠 Carousel</button>
+    <button id="favoritesBtn">❤️ My Favorites</button>
   </div>
+</header>
 
-  <!-- Lightbox -->
-  <div class="lightbox" id="lightbox">
-    <span class="close">&times;</span>
-    <img id="lightbox-img" src="" alt="">
-    <div class="caption" id="caption"></div>
-    <div class="controls">
-      <button id="prev">⟨ Prev</button>
-      <button id="play">▶ Play</button>
-      <button id="next">Next ⟩</button>
-    </div>
+<div class="gallery" id="gallery">
+  <!-- Example photo items -->
+  <div class="photo-container" data-tags="ceremony">
+    <img src="https://i.postimg.cc/N2KdsByN/3-GSCz-JOz-T16-BDc3-WHB9-DA.webp" alt="Ceremony">
+    <div class="favorite">♡</div>
   </div>
+  <div class="photo-container" data-tags="reception dance">
+    <img src="https://i.postimg.cc/PLM3K6nh/d-KOr-Yf-Cq-Sd-SG3-A8m-Nmaufg.webp" alt="Reception">
+    <div class="favorite">♡</div>
+  </div>
+  <!-- Add other images same structure -->
+</div>
 
-  <script>
-    const galleryLinks = document.querySelectorAll('.gallery a');
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const caption = document.getElementById('caption');
-    const closeBtn = document.querySelector('.close');
-    const prevBtn = document.getElementById('prev');
-    const nextBtn = document.getElementById('next');
-    const playBtn = document.getElementById('play');
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <span class="close-btn">&times;</span>
+  <img id="lightboxImg" src="">
+  <div class="controls">
+    <button id="prevBtn">⬅️ Prev</button>
+    <button id="fullscreenBtn">🔲 Fullscreen</button>
+    <button id="nextBtn">Next ➡️</button>
+  </div>
+</div>
 
-    let currentIndex = 0;
-    let slideshowInterval;
-    let playing = false;
+<!-- Floating Share Button -->
+<button class="share-fab" id="shareFab">🔗</button>
+<div class="share-menu" id="shareMenu">
+  <button onclick="shareWhatsApp()">WhatsApp</button>
+  <button onclick="shareFacebook()">Facebook</button>
+  <button onclick="shareTwitter()">Twitter</button>
+  <button onclick="copyLink()">Copy Link</button>
+</div>
 
-    const images = [
-      { src: "https://i.postimg.cc/N2KdsByN/3-GSCz-JOz-T16-BDc3-WHB9-DA.webp", caption: "First Look" },
-      { src: "https://i.postimg.cc/PLM3K6nh/d-KOr-Yf-Cq-Sd-SG3-A8m-Nmaufg.webp", caption: "Ceremony" },
-      { src: "https://i.postimg.cc/DSLY4vxD/f3o-LT-cs-Sl-Kxzco-WLp-Y1fw.webp", caption: "Bride & Groom" },
-      { src: "https://i.postimg.cc/18wYVmvj/i-R4-QTL-TS-m-QR8-DBl-Zk-YYQ.webp", caption: "Romantic Moment" },
-      { src: "https://i.postimg.cc/YvYyLrdP/Rvyhn-D1-NRw-Oe-Ij-YIFhr-OIg.webp", caption: "Wedding Party" },
-      { src: "https://i.postimg.cc/vgqPwcmq/r-Yvh-CBIFSy-OCwj-Vs-gxxyg.webp", caption: "Couple Portrait" },
-      { src: "https://i.postimg.cc/qhbmHz7Z/Wi0-DZ9-ZGRpq-Yf-Ket-X0zg-Hw.webp", caption: "Reception Dance" },
-      { src: "https://i.postimg.cc/PCYFvXS0/Wlot6m-Pv-Ta-w-NMNFor7x-DQ.webp", caption: "Cake Cutting" },
-      { src: "https://i.postimg.cc/XZW1wRhw/ZEia-GCa-VRKe-Qh-QHXl-NTbp-Q.webp", caption: "Celebration" },
-      { src: "https://i.postimg.cc/FdsP6jh9/lgd-WFAw-Qfu-ce98-XGV8r-Q.jpg", caption: "Final Kiss" }
-    ];
+<script>
+  const gallery = document.getElementById('gallery');
+  const searchInput = document.getElementById('search');
+  const favoritesBtn = document.getElementById('favoritesBtn');
+  const gridBtn = document.getElementById('gridBtn');
+  const carouselBtn = document.getElementById('carouselBtn');
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  let currentIndex = 0;
+  let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+  let showingFavorites = false;
 
-    function showImage(index) {
-      currentIndex = index;
-      lightboxImg.src = images[index].src;
-      caption.textContent = images[index].caption;
-      lightbox.classList.add('active');
+  // Toggle favorite
+  document.querySelectorAll('.favorite').forEach((fav, i) => {
+    if(favorites.includes(i)) fav.classList.add('active');
+    fav.addEventListener('click', () => {
+      fav.classList.toggle('active');
+      if(fav.classList.contains('active')) favorites.push(i);
+      else favorites = favorites.filter(f => f !== i);
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+    });
+  });
+
+  // Search filter
+  searchInput.addEventListener('input', () => {
+    const term = searchInput.value.toLowerCase();
+    document.querySelectorAll('.photo-container').forEach(item => {
+      const tags = item.getAttribute('data-tags').toLowerCase();
+      item.style.display = tags.includes(term) ? '' : 'none';
+    });
+  });
+
+  // Favorites filter
+  favoritesBtn.addEventListener('click', () => {
+    showingFavorites = !showingFavorites;
+    favoritesBtn.classList.toggle('active');
+    document.querySelectorAll('.photo-container').forEach((item, i) => {
+      item.style.display = (showingFavorites && !favorites.includes(i)) ? 'none' : '';
+    });
+  });
+
+  // Layout toggle
+  gridBtn.addEventListener('click', () => {
+    gallery.classList.remove('carousel');
+    gridBtn.classList.add('active'); carouselBtn.classList.remove('active');
+  });
+  carouselBtn.addEventListener('click', () => {
+    gallery.classList.add('carousel');
+    carouselBtn.classList.add('active'); gridBtn.classList.remove('active');
+  });
+
+  // Lightbox open
+  document.querySelectorAll('.gallery img').forEach((img, i) => {
+    img.addEventListener('click', () => {
+      currentIndex = i;
+      lightbox.style.display = 'flex';
+      lightboxImg.src = img.src;
+    });
+  });
+
+  document.querySelector('.close-btn').onclick = () => lightbox.style.display = 'none';
+  document.getElementById('prevBtn').onclick = () => changePhoto(-1);
+  document.getElementById('nextBtn').onclick = () => changePhoto(1);
+
+  function changePhoto(step) {
+    const imgs = document.querySelectorAll('.gallery img');
+    currentIndex = (currentIndex + step + imgs.length) % imgs.length;
+    lightboxImg.src = imgs[currentIndex].src;
+  }
+
+  // Fullscreen toggle
+  document.getElementById('fullscreenBtn').onclick = () => {
+    if (!document.fullscreenElement) {
+      lightbox.requestFullscreen();
+    } else {
+      document.exitFullscreen();
     }
+  };
 
-    galleryLinks.forEach((link, index) => {
-      link.addEventListener('click', e => {
-        e.preventDefault();
-        showImage(index);
-      });
-    });
-
-    closeBtn.addEventListener('click', () => {
-      lightbox.classList.remove('active');
-      stopSlideshow();
-    });
-
-    prevBtn.addEventListener('click', () => {
-      currentIndex = (currentIndex - 1 + images.length) % images.length;
-      showImage(currentIndex);
-    });
-
-    nextBtn.addEventListener('click', () => {
-      currentIndex = (currentIndex + 1) % images.length;
-      showImage(currentIndex);
-    });
-
-    playBtn.addEventListener('click', () => {
-      if (playing) {
-        stopSlideshow();
-      } else {
-        startSlideshow();
-      }
-    });
-
-    function startSlideshow() {
-      playing = true;
-      playBtn.textContent = "⏸ Pause";
-      slideshowInterval = setInterval(() => {
-        currentIndex = (currentIndex + 1) % images.length;
-        showImage(currentIndex);
-      }, 3000);
+  // Share button
+  const shareFab = document.getElementById('shareFab');
+  const shareMenu = document.getElementById('shareMenu');
+  shareFab.addEventListener('click', () => {
+    if(navigator.share){
+      navigator.share({title:"Wedding Gallery", url:window.location.href});
+    } else {
+      shareMenu.style.display = shareMenu.style.display === 'flex' ? 'none' : 'flex';
     }
+  });
 
-    function stopSlideshow() {
-      playing = false;
-      playBtn.textContent = "▶ Play";
-      clearInterval(slideshowInterval);
-    }
+  function shareWhatsApp(){ window.open(`https://wa.me/?text=${encodeURIComponent(window.location.href)}`); }
+  function shareFacebook(){ window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`); }
+  function shareTwitter(){ window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}`); }
+  function copyLink(){ navigator.clipboard.writeText(window.location.href); alert("Link copied!"); }
+</script>
 
-    // Keyboard Navigation
-    document.addEventListener('keydown', (e) => {
-      if (!lightbox.classList.contains('active')) return;
-      if (e.key === "ArrowLeft") prevBtn.click();
-      if (e.key === "ArrowRight") nextBtn.click();
-      if (e.key === "Escape") closeBtn.click();
-    });
-
-    // Swipe Support (Mobile)
-    let touchStartX = 0;
-    lightbox.addEventListener('touchstart', e => {
-      touchStartX = e.changedTouches[0].screenX;
-    });
-
-    lightbox.addEventListener('touchend', e => {
-      let touchEndX = e.changedTouches[0].screenX;
-      if (touchEndX < touchStartX - 50) nextBtn.click();
-      if (touchEndX > touchStartX + 50) prevBtn.click();
-    });
-  </script>
 </body>
-      </html>
+  </html>
