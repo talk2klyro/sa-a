@@ -2,47 +2,53 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Emotional Filter UI</title>
+  <title>Wedding Gallery</title>
   <style>
-    /* Base styling */
-    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #111;
-      color: white;
-      transition: all 0.8s ease;
-    }
-    h1 {
-      text-align: center;
-      margin: 20px 0;
-      font-size: 2.5em;
-      letter-spacing: 2px;
+      background: #fafafa;
+      color: #333;
     }
 
-    /* Filter buttons */
+    /* Header Invite */
+    header {
+      text-align: center;
+      padding: 60px 20px;
+      background: linear-gradient(135deg, #d16ba5, #86a8e7, #5ffbf1);
+      color: white;
+    }
+    header h1 {
+      font-size: 3em;
+      margin: 0;
+    }
+    header p {
+      font-size: 1.2em;
+      opacity: 0.9;
+    }
+
+    /* Filters */
     .filters {
       text-align: center;
-      margin-bottom: 20px;
+      margin: 20px 0;
     }
     .filters button {
       margin: 6px;
-      padding: 12px 18px;
+      padding: 10px 18px;
       border: none;
       border-radius: 8px;
-      cursor: pointer;
-      font-size: 15px;
-      background: #333;
+      background: #444;
       color: white;
-      transition: all 0.3s ease;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
     }
     .filters button:hover {
-      transform: scale(1.15);
-      background: #555;
-      box-shadow: 0 0 15px rgba(255,255,255,0.4);
+      background: #666;
+      transform: scale(1.1);
     }
 
-    /* Gallery grid */
+    /* Gallery */
     .gallery {
       display: flex;
       flex-wrap: wrap;
@@ -51,159 +57,67 @@
       padding: 20px;
     }
     .gallery img {
-      width: 300px;
-      border-radius: 16px;
-      transition: transform 0.6s ease, box-shadow 0.6s ease, filter 0.6s ease;
+      width: 280px;
+      border-radius: 12px;
       cursor: pointer;
+      transition: 0.4s ease;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
     }
     .gallery img:hover {
-      transform: scale(1.08) rotate(1deg);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.7);
-    }
-
-    /* === EMOTIONAL THEME PACK === */
-
-    /* 1. Ambition */
-    body.ambition {
-      background: linear-gradient(135deg, #000, #ffd700, #ffecb3);
-      color: #ffd700;
-    }
-    body.ambition h1 {
-      text-shadow: 0 0 15px gold, 0 0 35px orange;
-      animation: glow 2s infinite alternate;
-    }
-    @keyframes glow {
-      from { text-shadow: 0 0 10px gold; }
-      to { text-shadow: 0 0 40px orange; }
-    }
-    body.ambition .gallery img:hover {
-      box-shadow: 0 0 40px gold;
-      transform: scale(1.12) rotate(-2deg);
-    }
-
-    /* 2. Chaos */
-    body.chaos {
-      background: linear-gradient(45deg, #200, #400, #111);
-      color: #ff4c4c;
-      animation: glitch-bg 1s infinite;
-    }
-    @keyframes glitch-bg {
-      0% { background-position: 0 0; }
-      25% { background-position: 5px -5px; }
-      50% { background-position: -5px 5px; }
-      75% { background-position: 5px 5px; }
-      100% { background-position: 0 0; }
-    }
-    body.chaos .gallery img {
-      filter: hue-rotate(60deg) contrast(200%);
-      animation: glitch 0.4s infinite;
-    }
-    @keyframes glitch {
-      0% { transform: translate(0); }
-      25% { transform: translate(-3px, 3px); }
-      50% { transform: translate(3px, -3px); }
-      75% { transform: translate(-2px, -2px); }
-      100% { transform: translate(0); }
-    }
-
-    /* 3. Serenity */
-    body.serenity {
-      background: radial-gradient(circle at center, #003366, #001a33, #000);
-      color: #aeeaff;
-    }
-    body.serenity h1 {
-      text-shadow: 0 0 25px #80dfff;
-    }
-    body.serenity .gallery img {
-      border: 2px solid #99ccff;
-      filter: drop-shadow(0 0 20px #3399ff);
-    }
-
-    /* 4. Energy */
-    body.energy {
-      background: linear-gradient(90deg, #000, #0f0, #0ff, #000);
-      background-size: 400% 400%;
-      animation: energy-flow 3s linear infinite;
-      color: #0f0;
-    }
-    @keyframes energy-flow {
-      0% { background-position: 0 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0 50%; }
-    }
-    body.energy h1 {
-      text-shadow: 0 0 15px lime, 0 0 35px cyan;
-    }
-    body.energy .gallery img {
-      border: 2px solid lime;
-      animation: pulse-shadow 2s infinite;
-    }
-    @keyframes pulse-shadow {
-      0%, 100% { box-shadow: 0 0 15px lime; }
-      50% { box-shadow: 0 0 40px cyan; }
-    }
-
-    /* 5. Mystery */
-    body.mystery {
-      background: radial-gradient(circle, #111, #000);
-      color: #d0aaff;
-      background-image: url("https://i.ibb.co/3hpM4Fx/stars.gif");
-      background-size: cover;
-    }
-    body.mystery h1 {
-      text-shadow: 0 0 25px violet, 0 0 40px indigo;
-    }
-    body.mystery .gallery img {
-      filter: grayscale(50%) drop-shadow(0 0 15px purple);
-      border-radius: 50%;
-      transition: transform 1.5s ease;
-    }
-    body.mystery .gallery img:hover {
-      transform: rotateY(180deg) scale(1.15);
-    }
-
-    /* 6. Loneliness */
-    body.loneliness {
-      background: linear-gradient(to bottom, #111, #333);
-      color: #bbb;
-      filter: grayscale(100%);
-    }
-    body.loneliness h1 {
-      color: #ccc;
-      text-shadow: 0 0 10px #666;
-    }
-    body.loneliness .gallery img {
-      filter: grayscale(100%) opacity(0.7);
-    }
-    body.loneliness .gallery img:hover {
-      filter: grayscale(0%) opacity(1);
       transform: scale(1.05);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+    .lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(255,255,255,0.5);
     }
   </style>
 </head>
 <body>
-  <h1>🌆 Emotional Filter UI</h1>
+  <!-- Wedding Invite Header -->
+  <header>
+    <h1>💍 Aisha & Karim</h1>
+    <p>Together Forever | 12th December 2025 | Lagos, Nigeria</p>
+  </header>
 
-  <!-- Filter buttons -->
+  <!-- Filter Buttons -->
   <div class="filters">
     <button onclick="filterPhotos('all')">All</button>
-    <button onclick="filterPhotos('ambition')">Ambition</button>
-    <button onclick="filterPhotos('chaos')">Chaos</button>
-    <button onclick="filterPhotos('serenity')">Serenity</button>
-    <button onclick="filterPhotos('energy')">Energy</button>
-    <button onclick="filterPhotos('mystery')">Mystery</button>
-    <button onclick="filterPhotos('loneliness')">Loneliness</button>
+    <button onclick="filterPhotos('engagement')">Engagement</button>
+    <button onclick="filterPhotos('nikah')">Nikah</button>
+    <button onclick="filterPhotos('reception')">Reception</button>
+    <button onclick="filterPhotos('romantic')">Romantic</button>
+    <button onclick="filterPhotos('joyful')">Joyful</button>
+    <button onclick="filterPhotos('spiritual')">Spiritual</button>
   </div>
 
   <!-- Gallery -->
   <div class="gallery" id="gallery"></div>
 
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <img id="lightbox-img" src="" alt="">
+  </div>
+
   <script>
-    // Mock photos.json for demo — later AI script will generate this
-    let photos = [
-      { "url": "https://i.postimg.cc/3WYWQ5qX/8906e69e882131bcadda6ed996ac695c.jpg", "emotion": "ambition" },
-      { "url": "https://i.postimg.cc/9rfMzPCz/d7928186887071adbdd5bd26ead74653.jpg", "emotion": "chaos" },
-      { "url": "https://i.postimg.cc/xq580prW/f543d86d2caf4f9925aa2611d8171374.jpg", "emotion": "serenity" }
+    // Mock photo data (replace with JSON later)
+    const photos = [
+      { url: "https://i.postimg.cc/3WYWQ5qX/8906e69e882131bcadda6ed996ac695c.jpg", stage: "engagement", emotion: "romantic" },
+      { url: "https://i.postimg.cc/9rfMzPCz/d7928186887071adbdd5bd26ead74653.jpg", stage: "nikah", emotion: "spiritual" },
+      { url: "https://i.postimg.cc/xq580prW/f543d86d2caf4f9925aa2611d8171374.jpg", stage: "reception", emotion: "joyful" }
     ];
 
     function displayPhotos(list) {
@@ -212,21 +126,27 @@
       list.forEach(photo => {
         const img = document.createElement('img');
         img.src = photo.url;
-        img.alt = photo.emotion;
+        img.alt = photo.stage;
+        img.onclick = () => openLightbox(photo.url);
         gallery.appendChild(img);
       });
     }
 
-    function filterPhotos(emotion) {
-      document.body.className = (emotion === 'all') ? '' : emotion;
-      if (emotion === 'all') {
-        displayPhotos(photos);
-      } else {
-        displayPhotos(photos.filter(p => p.emotion === emotion));
-      }
+    function filterPhotos(filter) {
+      if (filter === 'all') displayPhotos(photos);
+      else displayPhotos(photos.filter(p => p.stage === filter || p.emotion === filter));
     }
 
-    // Load all on start
+    // Lightbox functions
+    function openLightbox(src) {
+      document.getElementById('lightbox-img').src = src;
+      document.getElementById('lightbox').style.display = 'flex';
+    }
+    function closeLightbox() {
+      document.getElementById('lightbox').style.display = 'none';
+    }
+
+    // Initial load
     displayPhotos(photos);
   </script>
 </body>
