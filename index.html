@@ -1,138 +1,78 @@
-<!<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Time-Lens (Zoomable)</title>
+  <title>Time-Lens UI Prototype</title>
   <style>
     body {
       margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
-      background: #111;
-      color: white;
-      font-family: sans-serif;
-      overflow: hidden;
     }
-
-    h1 {
-      margin-bottom: 10px;
-    }
-
     .container {
       position: relative;
-      width: 80%;
-      max-width: 900px;
-      aspect-ratio: 16/9;
-      border-radius: 20px;
+      width: 90%;
+      max-width: 800px;
+      height: 500px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      cursor: crosshair;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.7);
     }
-
-    .container img {
+    .image-layer {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: opacity 0.5s ease;
     }
-
-    .overlay-year {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 2rem;
-      font-weight: bold;
-      color: white;
-      text-shadow: 0 0 20px rgba(0, 255, 255, 0.9);
-      pointer-events: none;
+    .slider {
+      width: 80%;
+      margin-top: 20px;
     }
-
-    .time-layer {
-      --lens-size: 0px;
-      -webkit-mask-image: radial-gradient(circle var(--lens-size) at center, rgba(0,0,0,1) 100%, rgba(0,0,0,0) 100%);
-      -webkit-mask-repeat: no-repeat;
-      -webkit-mask-position: -9999px -9999px;
-      mask-image: radial-gradient(circle var(--lens-size) at center, rgba(0,0,0,1) 100%, rgba(0,0,0,0) 100%);
-      mask-repeat: no-repeat;
-      mask-position: -9999px -9999px;
-      transition: --lens-size 0.2s ease;
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <h1>🕰 Time-Lens (Zoomable Portal)</h1>
-
-  <div class="container" id="lensContainer">
-    <!-- Present (base layer) -->
-    <img src="https://i.postimg.cc/CB8bBjky/a89f2af1429f71fb9e855ba0200ad182.jpg" alt="Present">
-
-    <!-- Past + Future layers -->
-    <img src="https://i.postimg.cc/WDCM19F1/20150eefaec02493eb09666e1e28f73b.jpg" class="time-layer" id="pastImg" alt="Past">
-    <img src="https://i.postimg.cc/06FpytM9/ef677859f9cd9d5267cc5e7ef8797a1d.jpg" class="time-layer" id="futureImg" alt="Future">
-
-    <!-- Year label -->
-    <div class="overlay-year" id="yearLabel">Present</div>
+  <h1>⏳ Time-Lens UI Prototype</h1>
+  <div class="container">
+    <img id="past" class="image-layer" src="https://i.postimg.cc/N0j4K6vY/IMG-20250820-WA0064.jpg" style="opacity:1">
+    <img id="present" class="image-layer" src="https://i.postimg.cc/tgvzWs96/IMG-20250820-WA0078.jpg" style="opacity:0">
+    <img id="future" class="image-layer" src="https://i.postimg.cc/rmdNJqpP/IMG-20250820-WA0081.jpg" style="opacity:0">
   </div>
-
+  <input type="range" min="0" max="2" step="1" value="0" class="slider" id="timeSlider">
   <script>
-    const container = document.getElementById("lensContainer");
-    const pastImg = document.getElementById("pastImg");
-    const futureImg = document.getElementById("futureImg");
-    const yearLabel = document.getElementById("yearLabel");
+    const slider = document.getElementById('timeSlider');
+    const past = document.getElementById('past');
+    const present = document.getElementById('present');
+    const future = document.getElementById('future');slider.addEventListener('input', () => {
+  const val = parseInt(slider.value);
+  if(val === 0){
+    past.style.opacity = 1;
+    present.style.opacity = 0;
+    future.style.opacity = 0;
+  } else if(val === 1){
+    past.style.opacity = 0;
+    present.style.opacity = 1;
+    future.style.opacity = 0;
+  } else {
+    past.style.opacity = 0;
+    present.style.opacity = 0;
+    future.style.opacity = 1;
+  }
+});
 
-    let activeImg = null;
-    let lensSize = 150; // default size
-    const minSize = 50;
-    const maxSize = 400;
-
-    container.addEventListener("mousemove", (e) => {
-      const rect = container.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const centerX = rect.width / 2;
-
-      if (x < centerX) {
-        activeImg = pastImg;
-        pastImg.style.setProperty("--lens-size", lensSize + "px");
-        pastImg.style.webkitMaskPosition = `${x}px ${y}px`;
-        pastImg.style.maskPosition = `${x}px ${y}px`;
-        futureImg.style.setProperty("--lens-size", "0px");
-        yearLabel.textContent = "Past";
-      } else {
-        activeImg = futureImg;
-        futureImg.style.setProperty("--lens-size", lensSize + "px");
-        futureImg.style.webkitMaskPosition = `${x}px ${y}px`;
-        futureImg.style.maskPosition = `${x}px ${y}px`;
-        pastImg.style.setProperty("--lens-size", "0px");
-        yearLabel.textContent = "Future";
-      }
-    });
-
-    container.addEventListener("mouseleave", () => {
-      if (activeImg) {
-        activeImg.style.setProperty("--lens-size", "0px");
-        activeImg.style.webkitMaskPosition = `-9999px -9999px`;
-        activeImg.style.maskPosition = `-9999px -9999px`;
-      }
-      yearLabel.textContent = "Present";
-    });
-
-    // Zoom with scroll
-    container.addEventListener("wheel", (e) => {
-      e.preventDefault();
-      lensSize += e.deltaY < 0 ? 20 : -20; // scroll up = bigger, down = smaller
-      lensSize = Math.max(minSize, Math.min(maxSize, lensSize));
-      if (activeImg) {
-        activeImg.style.setProperty("--lens-size", lensSize + "px");
-      }
-    });
   </script>
 </body>
 </html>
