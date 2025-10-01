@@ -3,37 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wedding Gallery</title>
+  <title>Premium Wedding Gallery</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
-    <input type="text" id="search" placeholder="🔍 Search moments...">
-    <button id="toggleLayout">🟦 Grid</button>
-    <button id="viewFavorites">❤️ Favorites</button>
+    <h1>Premium Wedding Gallery</h1>
+    <input type="text" id="search" placeholder="Search by keyword or tag">
+    <button id="toggleFavorites">❤️ Favorites</button>
+    <button id="toggleLayout">Grid / Carousel</button>
   </header>
 
-  <main>
-    <div class="gallery grid" id="gallery"></div>
-  </main>
+  <main id="gallery" class="grid"></main>
 
   <!-- Lightbox -->
-  <div id="lightbox" class="lightbox hidden">
-    <span id="closeLightbox">✖</span>
-    <span id="fullscreen">🔲</span>
-    <span id="lightboxEmoji">🤔</span>
+  <div id="lightbox" class="hidden">
+    <span id="closeLightbox">&times;</span>
     <img id="lightboxImg" src="" alt="">
-    <div class="share-buttons">
-      <button class="share" data-type="whatsapp">WhatsApp</button>
-      <button class="share" data-type="facebook">Facebook</button>
-      <button class="share" data-type="twitter">Twitter</button>
-      <button class="share" data-type="copy">Copy Link</button>
+    <div id="shareButtons">
+      <button data-share="whatsapp">WhatsApp</button>
+      <button data-share="facebook">Facebook</button>
+      <button data-share="twitter">Twitter</button>
+      <button data-share="copy">Copy Link</button>
     </div>
   </div>
 
-  <!-- Footer Branding -->
-  <footer id="developerFooter">
-    Crafted with <span id="portfolioEmoji" style="cursor:pointer;">🤔</span>
+  <footer>
+    Crafted with <span id="developerLink">🤔</span>
   </footer>
 
   <script src="gallery.js"></script>
