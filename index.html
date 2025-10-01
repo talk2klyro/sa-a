@@ -4,21 +4,114 @@
   <meta charset="UTF-8">
   <title>Emotional Filter UI</title>
   <style>
-    body { font-family: sans-serif; background: #111; color: white; }
-    .filters button { margin: 5px; padding: 10px; border: none; cursor: pointer; }
-    .gallery { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
-    .gallery img { width: 200px; border-radius: 10px; transition: transform 0.3s; }
-    .gallery img:hover { transform: scale(1.05); }
-    /* Emotion Themes */
-    body.ambition { background: linear-gradient(to right, black, gold); }
-    body.chaos { background: #200; animation: chaos 0.2s infinite alternate; }
-    body.serenity { background: #003366; }
-    body.energy { background: #111; color: #0f0; }
-    @keyframes chaos { from { background: #200; } to { background: #400; } }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #111;
+      color: white;
+      transition: all 0.6s ease;
+    }
+
+    h1 { text-align: center; margin: 20px 0; }
+
+    .filters {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .filters button {
+      margin: 5px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      background: #333;
+      color: white;
+      transition: 0.3s;
+    }
+
+    .filters button:hover {
+      transform: scale(1.1);
+      background: #555;
+    }
+
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .gallery img {
+      width: 300px;
+      border-radius: 15px;
+      transition: transform 0.4s ease, box-shadow 0.4s;
+      cursor: pointer;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.05) rotate(1deg);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    }
+
+    /* === EMOTION THEMES === */
+
+    body.ambition {
+      background: linear-gradient(135deg, #000000, #ffd700);
+      color: #ffd700;
+    }
+    body.ambition h1 { text-shadow: 0 0 15px gold; }
+    body.ambition .gallery img:hover {
+      box-shadow: 0 8px 40px gold;
+    }
+
+    body.chaos {
+      background: repeating-linear-gradient(
+        -45deg,
+        #300, #300 20px,
+        #600 20px, #600 40px
+      );
+      animation: shake 0.2s infinite;
+      color: #ff4444;
+    }
+    @keyframes shake {
+      0% { transform: translate(0, 0); }
+      25% { transform: translate(2px, -2px); }
+      50% { transform: translate(-2px, 2px); }
+      75% { transform: translate(2px, 2px); }
+      100% { transform: translate(-2px, -2px); }
+    }
+
+    body.serenity {
+      background: linear-gradient(to bottom, #003366, #3399ff);
+      color: #e0f7fa;
+    }
+    body.serenity h1 { text-shadow: 0 0 15px #99ccff; }
+    body.serenity .gallery img {
+      border-radius: 25px;
+      filter: drop-shadow(0 0 20px #66ccff);
+    }
+
+    body.energy {
+      background: #111;
+      color: lime;
+    }
+    body.energy h1 {
+      text-shadow: 0 0 15px lime, 0 0 30px lime;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0% { text-shadow: 0 0 10px lime; }
+      50% { text-shadow: 0 0 30px lime; }
+      100% { text-shadow: 0 0 10px lime; }
+    }
   </style>
 </head>
 <body>
-  <h1>Emotional Filter UI</h1>
+  <h1>🌆 Emotional Filter UI</h1>
+
   <div class="filters">
     <button onclick="filterPhotos('all')">All</button>
     <button onclick="filterPhotos('ambition')">Ambition</button>
@@ -26,30 +119,38 @@
     <button onclick="filterPhotos('serenity')">Serenity</button>
     <button onclick="filterPhotos('energy')">Energy</button>
   </div>
+
   <div class="gallery" id="gallery"></div>
 
   <script>
-    let photos = [];
-    async function loadPhotos() {
-      const res = await fetch('photos.json');
-      photos = await res.json();
-      displayPhotos(photos);
-    }
+    let photos = [
+      { "url": "https://i.postimg.cc/3WYWQ5qX/8906e69e882131bcadda6ed996ac695c.jpg", "emotion": "ambition" },
+      { "url": "https://i.postimg.cc/9rfMzPCz/d7928186887071adbdd5bd26ead74653.jpg", "emotion": "chaos" },
+      { "url": "https://i.postimg.cc/xq580prW/f543d86d2caf4f9925aa2611d8171374.jpg", "emotion": "serenity" }
+    ];
+
     function displayPhotos(list) {
       const gallery = document.getElementById('gallery');
       gallery.innerHTML = '';
       list.forEach(photo => {
         const img = document.createElement('img');
         img.src = photo.url;
+        img.alt = photo.emotion;
         gallery.appendChild(img);
       });
     }
+
     function filterPhotos(emotion) {
-      document.body.className = emotion === 'all' ? '' : emotion;
-      if (emotion === 'all') displayPhotos(photos);
-      else displayPhotos(photos.filter(p => p.emotion === emotion));
+      document.body.className = (emotion === 'all') ? '' : emotion;
+      if (emotion === 'all') {
+        displayPhotos(photos);
+      } else {
+        displayPhotos(photos.filter(p => p.emotion === emotion));
+      }
     }
-    loadPhotos();
+
+    // Load all on start
+    displayPhotos(photos);
   </script>
 </body>
 </html>
