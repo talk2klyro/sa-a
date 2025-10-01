@@ -4,125 +4,202 @@
   <meta charset="UTF-8">
   <title>Emotional Filter UI</title>
   <style>
+    /* Base styling */
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
       background: #111;
       color: white;
-      transition: all 0.6s ease;
+      transition: all 0.8s ease;
+    }
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 2.5em;
+      letter-spacing: 2px;
     }
 
-    h1 { text-align: center; margin: 20px 0; }
-
+    /* Filter buttons */
     .filters {
       text-align: center;
       margin-bottom: 20px;
     }
-
     .filters button {
-      margin: 5px;
-      padding: 10px 15px;
+      margin: 6px;
+      padding: 12px 18px;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 15px;
       background: #333;
       color: white;
-      transition: 0.3s;
+      transition: all 0.3s ease;
     }
-
     .filters button:hover {
-      transform: scale(1.1);
+      transform: scale(1.15);
       background: #555;
+      box-shadow: 0 0 15px rgba(255,255,255,0.4);
     }
 
+    /* Gallery grid */
     .gallery {
       display: flex;
       flex-wrap: wrap;
-      gap: 15px;
+      gap: 20px;
       justify-content: center;
       padding: 20px;
     }
-
     .gallery img {
       width: 300px;
-      border-radius: 15px;
-      transition: transform 0.4s ease, box-shadow 0.4s;
+      border-radius: 16px;
+      transition: transform 0.6s ease, box-shadow 0.6s ease, filter 0.6s ease;
       cursor: pointer;
     }
-
     .gallery img:hover {
-      transform: scale(1.05) rotate(1deg);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      transform: scale(1.08) rotate(1deg);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.7);
     }
 
-    /* === EMOTION THEMES === */
+    /* === EMOTIONAL THEME PACK === */
 
+    /* 1. Ambition */
     body.ambition {
-      background: linear-gradient(135deg, #000000, #ffd700);
+      background: linear-gradient(135deg, #000, #ffd700, #ffecb3);
       color: #ffd700;
     }
-    body.ambition h1 { text-shadow: 0 0 15px gold; }
+    body.ambition h1 {
+      text-shadow: 0 0 15px gold, 0 0 35px orange;
+      animation: glow 2s infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 10px gold; }
+      to { text-shadow: 0 0 40px orange; }
+    }
     body.ambition .gallery img:hover {
-      box-shadow: 0 8px 40px gold;
+      box-shadow: 0 0 40px gold;
+      transform: scale(1.12) rotate(-2deg);
     }
 
+    /* 2. Chaos */
     body.chaos {
-      background: repeating-linear-gradient(
-        -45deg,
-        #300, #300 20px,
-        #600 20px, #600 40px
-      );
-      animation: shake 0.2s infinite;
-      color: #ff4444;
+      background: linear-gradient(45deg, #200, #400, #111);
+      color: #ff4c4c;
+      animation: glitch-bg 1s infinite;
     }
-    @keyframes shake {
-      0% { transform: translate(0, 0); }
-      25% { transform: translate(2px, -2px); }
-      50% { transform: translate(-2px, 2px); }
-      75% { transform: translate(2px, 2px); }
-      100% { transform: translate(-2px, -2px); }
+    @keyframes glitch-bg {
+      0% { background-position: 0 0; }
+      25% { background-position: 5px -5px; }
+      50% { background-position: -5px 5px; }
+      75% { background-position: 5px 5px; }
+      100% { background-position: 0 0; }
+    }
+    body.chaos .gallery img {
+      filter: hue-rotate(60deg) contrast(200%);
+      animation: glitch 0.4s infinite;
+    }
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      25% { transform: translate(-3px, 3px); }
+      50% { transform: translate(3px, -3px); }
+      75% { transform: translate(-2px, -2px); }
+      100% { transform: translate(0); }
     }
 
+    /* 3. Serenity */
     body.serenity {
-      background: linear-gradient(to bottom, #003366, #3399ff);
-      color: #e0f7fa;
+      background: radial-gradient(circle at center, #003366, #001a33, #000);
+      color: #aeeaff;
     }
-    body.serenity h1 { text-shadow: 0 0 15px #99ccff; }
+    body.serenity h1 {
+      text-shadow: 0 0 25px #80dfff;
+    }
     body.serenity .gallery img {
-      border-radius: 25px;
-      filter: drop-shadow(0 0 20px #66ccff);
+      border: 2px solid #99ccff;
+      filter: drop-shadow(0 0 20px #3399ff);
     }
 
+    /* 4. Energy */
     body.energy {
-      background: #111;
-      color: lime;
+      background: linear-gradient(90deg, #000, #0f0, #0ff, #000);
+      background-size: 400% 400%;
+      animation: energy-flow 3s linear infinite;
+      color: #0f0;
+    }
+    @keyframes energy-flow {
+      0% { background-position: 0 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0 50%; }
     }
     body.energy h1 {
-      text-shadow: 0 0 15px lime, 0 0 30px lime;
-      animation: pulse 1s infinite;
+      text-shadow: 0 0 15px lime, 0 0 35px cyan;
     }
-    @keyframes pulse {
-      0% { text-shadow: 0 0 10px lime; }
-      50% { text-shadow: 0 0 30px lime; }
-      100% { text-shadow: 0 0 10px lime; }
+    body.energy .gallery img {
+      border: 2px solid lime;
+      animation: pulse-shadow 2s infinite;
+    }
+    @keyframes pulse-shadow {
+      0%, 100% { box-shadow: 0 0 15px lime; }
+      50% { box-shadow: 0 0 40px cyan; }
+    }
+
+    /* 5. Mystery */
+    body.mystery {
+      background: radial-gradient(circle, #111, #000);
+      color: #d0aaff;
+      background-image: url("https://i.ibb.co/3hpM4Fx/stars.gif");
+      background-size: cover;
+    }
+    body.mystery h1 {
+      text-shadow: 0 0 25px violet, 0 0 40px indigo;
+    }
+    body.mystery .gallery img {
+      filter: grayscale(50%) drop-shadow(0 0 15px purple);
+      border-radius: 50%;
+      transition: transform 1.5s ease;
+    }
+    body.mystery .gallery img:hover {
+      transform: rotateY(180deg) scale(1.15);
+    }
+
+    /* 6. Loneliness */
+    body.loneliness {
+      background: linear-gradient(to bottom, #111, #333);
+      color: #bbb;
+      filter: grayscale(100%);
+    }
+    body.loneliness h1 {
+      color: #ccc;
+      text-shadow: 0 0 10px #666;
+    }
+    body.loneliness .gallery img {
+      filter: grayscale(100%) opacity(0.7);
+    }
+    body.loneliness .gallery img:hover {
+      filter: grayscale(0%) opacity(1);
+      transform: scale(1.05);
     }
   </style>
 </head>
 <body>
   <h1>🌆 Emotional Filter UI</h1>
 
+  <!-- Filter buttons -->
   <div class="filters">
     <button onclick="filterPhotos('all')">All</button>
     <button onclick="filterPhotos('ambition')">Ambition</button>
     <button onclick="filterPhotos('chaos')">Chaos</button>
     <button onclick="filterPhotos('serenity')">Serenity</button>
     <button onclick="filterPhotos('energy')">Energy</button>
+    <button onclick="filterPhotos('mystery')">Mystery</button>
+    <button onclick="filterPhotos('loneliness')">Loneliness</button>
   </div>
 
+  <!-- Gallery -->
   <div class="gallery" id="gallery"></div>
 
   <script>
+    // Mock photos.json for demo — later AI script will generate this
     let photos = [
       { "url": "https://i.postimg.cc/3WYWQ5qX/8906e69e882131bcadda6ed996ac695c.jpg", "emotion": "ambition" },
       { "url": "https://i.postimg.cc/9rfMzPCz/d7928186887071adbdd5bd26ead74653.jpg", "emotion": "chaos" },
