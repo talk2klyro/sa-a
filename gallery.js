@@ -3,14 +3,17 @@ let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 let layout = localStorage.getItem("layout") || "grid";
 let showFavorites = false;
 
-// Load images.json and build gallery
+// Portfolio placeholder URL
+const portfolioURL = "https://placeholder-portfolio.com?ref=wedding-gallery&utm_source=gallery&utm_medium=emoji";
+
+// Load JSON and render
 async function loadGallery() {
   const res = await fetch('images.json');
   allPhotos = await res.json();
   renderGallery();
 }
 
-// Render gallery
+// Render photos
 function renderGallery() {
   const gallery = document.getElementById('gallery');
   gallery.className = `gallery ${layout}`;
@@ -31,11 +34,13 @@ function renderGallery() {
       <img src="${photo.src}" alt="${photo.alt}">
       <div class="favorite ${favorites.includes(photo.src) ? 'active' : ''}">❤️</div>
     `;
+
     div.querySelector("img").addEventListener("click", () => openLightbox(photo));
     div.querySelector(".favorite").addEventListener("click", (e) => {
       e.stopPropagation();
       toggleFavorite(photo.src, div.querySelector(".favorite"));
     });
+
     gallery.appendChild(div);
   });
 }
@@ -66,11 +71,8 @@ document.getElementById("closeLightbox").addEventListener("click", () => {
 
 // Fullscreen
 document.getElementById("fullscreen").addEventListener("click", () => {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen();
-  } else {
-    document.exitFullscreen();
-  }
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
 });
 
 // Layout toggle
@@ -89,7 +91,10 @@ document.getElementById("viewFavorites").addEventListener("click", () => {
 // Search filter
 document.getElementById("search").addEventListener("input", renderGallery);
 
-// Share buttons
+// Share buttons with branded text
+function getShareText() {
+  return `Check out this wedding gallery ✨ crafted with 🤔 ${window.location.href}`;
+}
 document.querySelectorAll(".share").forEach(btn => {
   btn.addEventListener("click", () => {
     const url = window.location.href;
@@ -102,16 +107,26 @@ document.querySelectorAll(".share").forEach(btn => {
     }
 
     switch(type) {
-      case "whatsapp": shareUrl = `https://wa.me/?text=${encodeURIComponent(url)}`; break;
-      case "facebook": shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`; break;
-      case "twitter": shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`; break;
-      case "copy":
-        navigator.clipboard.writeText(url);
-        alert("Link copied!");
-        return;
+      case "whatsapp": shareUrl = `https://wa.me/?text=${encodeURIComponent(getShareText())}`; break;
+      case "facebook": shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareText())}`; break;
+      case "twitter": shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(getShareText())}`; break;
+      case "copy": navigator.clipboard.writeText(url); alert("Link copied!"); return;
     }
     window.open(shareUrl, "_blank");
   });
+});
+
+// Branding: footer & lightbox 🤔 clicks
+document.getElementById("portfolioEmoji").addEventListener("click", () => {
+  window.open(portfolioURL, "_blank");
+});
+document.getElementById("lightboxEmoji").addEventListener("click", () => {
+  window.open(portfolioURL, "_blank");
+});
+
+// Easter Egg
+document.getElementById("portfolioEmoji").addEventListener("dblclick", () => {
+  alert("👋 Hey! I'm the developer behind this gallery. See my other works at https://placeholder-portfolio.com");
 });
 
 // Init
